@@ -1,5 +1,5 @@
 #!/bin/python3
-#written by Elias Eskelinen
+#written by Elias Eskelinen aka "Jonnelafin"
 import os, copy, sys
 import random
 def rnd(f, t):
@@ -30,7 +30,7 @@ tail = 3
 m = 1
 score = 0
 
-treat = (rnd(0, rows), rnd(0, columns))
+treat = (rnd(3, rows), rnd(3, columns))
 
 
 def zero():
@@ -93,7 +93,7 @@ def nprint(ar):
 #			print(x,end="")
 #		print()
 
-
+dead = False
 def safeM():
 	global x, y, vx, vy, columns, rows
 	global p_treat, p_snake, p_empty
@@ -147,7 +147,7 @@ def doScore():
 	m = m * 2
 	tail = tail + 1
 	arr[treat[0]][treat[1]] = p_empty
-	treat = (rnd(0, rows-2), rnd(0, columns-2))
+	treat = (rnd(1, rows-2), rnd(1, columns-2))
 	delay = delay * 0.9
 	mx = (2000000 - delta)
 	if(mx < 0):
@@ -161,8 +161,8 @@ def end(msg, askRetry = False):
 	if not askRetry:
 		sys.exit()
 	title(msg)
-def step(c):
-	global m, treat, rows, columns, arr, tail, delay, score, t, delta, vx, vy, m
+def step(c, autoR = False, render = True, printC = False, printXY = False, printS = True):
+	global m, treat, rows, columns, arr, tail, delay, score, t, delta, vx, vy, m, dead
 	global p_treat, p_snake, p_empty
 	#print("Not implemented yet!")
 	try:
@@ -192,23 +192,40 @@ def step(c):
 	#arr_show = copy.deepcopy(arr)
 	rev = False
 	rev = safeM();
-	if rev:
+	if rev and not autoR:
 		end("You died.", True)
+	if rev and autoR:
+		zero()
+		dead = True
+		#end("You died.", False)
 	#if rev:
 		#vy = vy * -1
 		#vx = vx * -1
 		#safeM();
 	rev = block()
-	arr[treat[0]][treat[1]] = p_treat
-	if rev:
+	try:
+		arr[treat[0]][treat[1]] = p_treat
+	except Exception as e:
+		e = ""
+	if rev and not autoR:
 		end("You died.", True)
+	if rev and autoR:
+		zero()
+		dead = True
+		#end("You died.", False)
 	
 	arr_show[x][y] = p_snake
 	#os.system("clear")
 	arr_show = copy.deepcopy(arr)
 	
-	nprint(arr_show)
-	print("score: " + str(int(score)) + ", " + str(m) + p_snake)
+	if render:
+		nprint(arr_show)
+		if printS:
+			print("score: " + str(int(score)) + ", " + str(m) + p_snake)
+		if printC:
+			print("Char: " + c)
+		if printXY:
+			print("XY: " + str(x) + "," + str(y))
 	t = t + 1
 	delta = delta + 1
 	#score = score + int(t*m)
