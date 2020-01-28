@@ -22,7 +22,7 @@ p_empty = " "
 arr_show = arr
 rows, columns = os.popen('stty size', 'r').read().split()
 rows = int(rows) - 5
-columns = int(columns) - 3
+columns = int(columns) - 4
 
 rows = int(rows)
 columns = int(columns)
@@ -78,15 +78,16 @@ def nprint(ar):
 	out = ""
 	#out = "-"*columns + "\n"
 	for i in ar:
+		out = out + "|"
 		for x in i:
 			out = out + x
-		out = out + "\n"
+		out = out + "|\n"
 	#out = out + "-"*columns + "\n"
 	#print("\033[H\033[J")
 	cls()
-	print("-"*columns)
+	print(" " + "-"*(columns) + " ")
 	print(out, end="")
-	print("-"*columns)
+	print(" " + "-"*(columns) + " ")
 	return out
 #	for i in ar:
 #		for x in i:
