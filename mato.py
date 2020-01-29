@@ -41,9 +41,9 @@ treat = (rnd(3, rows), rnd(3, columns))
 
 limitBounds = True
 
-def zero():
+def zero(dosave = True):
 	global x, y, tail, m, score, vx, vy, delay, delta, columns, rows, record, best
-	if hscore == score:
+	if hscore == score and dosave:
 		#best = copy.deepcopy(record)
 		save(record)
 	record = []
@@ -64,6 +64,9 @@ delay = 0.05
 delta = 0
 vx = 0
 vy = 0
+
+lt = []
+
 def clear():
 	global arr, rows, columns, p_empty
 	arr = []
@@ -111,21 +114,21 @@ def safeM():
 	global x, y, vx, vy, columns, rows
 	global p_treat, p_snake, p_empty
 	rev = False
-	if x > 0 and x < rows - 1:
+	if (x > 0 and x < rows - 1) or not limitBounds:
 		x = x + vx
-	else:
+	elif limitBounds:
 		vx = vx * -1
 		x = x + vx
 		rev = True
-	if y > 0 and y < columns-1:
+	if (y > 0 and y < columns-1) or not limitBounds:
 		y = y + vy
-	else:
+	elif limitBounds:
 		rev = True
 		vy = vy * -1
 		y = y + vy
-	return rev
+	return (rev and limitBounds)
 def block():
-	global x, y, columns, rows, arr, vx, vy
+	global x, y, columns, rows, arr, vx, vy, limitBounds
 	global p_treat, p_snake, p_empty
 	die = False
 	
@@ -141,7 +144,7 @@ def block():
 	if x > rows - 1:
 		x = rows - 1
 		die = True
-	if die:
+	if die and limitBounds:
 		return die
 	try:
 		if arr[x+vx][y+vy] == p_snake and vx+vy != 0:
@@ -153,7 +156,7 @@ def block():
 			doScore()
 	except Exception as e:
 		e = ""
-	return die
+	return (die and limitBounds)
 def doScore():
 	global m, treat, rows, columns, arr, tail, delay, score, hscore
 	global p_treat, p_snake, p_empty
@@ -176,10 +179,19 @@ def end(msg, askRetry = False):
 	if not askRetry:
 		sys.exit()
 	title(msg)
+def load():
+	global hscore
+	with open(filename, "r+") as f:
+		for i in f.readlines():
+			i = i.replace("\n", "")
+			if i[0] == "#":
+				hscore = int(i.split("#")[1])
+		f.close()
 def save(arr):
+	global hscore
 	cls()
 	an = ["|", "/", "-", "\\"]
-	out = ""
+	out = "#" + str(hscore) + "\n"
 	with open(filename, "w+") as f:
 		for i in arr:
 			cls()
@@ -197,7 +209,7 @@ def save(arr):
 def step(c, autoR = False, render = True, printC = False, printXY = False, printS = True):
 	global m, treat, rows, columns, arr, tail, delay, score, t, delta, vx, vy, m, dead, x, y
 	global p_treat, p_snake, p_empty
-	global record
+	global record, lt
 	#print("Not implemented yet!")
 	try:
 		arr[locs[t-tail][0]][locs[t-tail][1]] = p_empty
@@ -258,8 +270,10 @@ def step(c, autoR = False, render = True, printC = False, printXY = False, print
 		#zero()
 		dead = True
 		#end("You died.", False)
-	
-	arr_show[x][y] = p_snake
+	try:
+		arr_show[x][y] = p_snake
+	except Exception as e:
+		e = ""
 	#os.system("clear")
 	arr_show = copy.deepcopy(arr)
 	
@@ -275,7 +289,10 @@ def step(c, autoR = False, render = True, printC = False, printXY = False, print
 	delta = delta + 1
 	#score = score + int(t*m)
 	locs.append([x, y])
-	record.append(arr_show)
+	if treat != lt:
+		lt = treat
+		record.append(str(treat))
+	record.append(str(c))
 def main():
 	global m, treat, rows, columns, arr, tail, delay, score, t, delta, vx, vy, m
 	global p_treat, p_snake, p_empty
@@ -297,5 +314,6 @@ def title(title = "MATO"):
 		end("User exit")
 	main()
 if __name__ == '__main__':
+	load()
 	title()
 	#main()

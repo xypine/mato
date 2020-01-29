@@ -28,10 +28,15 @@ def cToXY(c):
 	if c == "d":
 		y = 1
 		x = 0
+	#if c == "e":
+		#x = x * 5
+		#y = y * 5
 	return x, y
 it = 1
-iterations = 200
-mato.zero()
+iterations = 1
+
+mato.limitBounds = False
+mato.zero(False)
 slee = 0
 ls = 20000000
 for t in range(iterations):
@@ -79,19 +84,35 @@ for t in range(iterations):
 			#while (mato.x + mato.vx <= 1 and not (c==" " or c=="w")) or (mato.x + mato.vx > mato.rows - 3 and not (c==" " or c=="s")):
 				#c = "d"
 			#	c = k[mato.rnd(0, len(k)-1)]
-			while ((c == "w" or c== "") and (mato.x + -1 <= 2)) or ((c == "s" or c== "") and (mato.x + 1 >= mato.rows -2)):
-				c = k[mato.rnd(0, len(k)-1)]
+#			while ((c == "w" or c== "") and (mato.x + -1 <= 2)) or ((c == "s" or c== "") and (mato.x + 1 >= mato.rows -2)):
+#				c = k[mato.rnd(0, len(k)-1)]
 			#while (c == "s" or c== "") and (mato.x + 2 >= mato.rows -4):
 			#	c = k[mato.rnd(0, len(k)-1)]
-			while ((c == "a" or c== "") and (mato.y + -1 <= 2)) or ((c == "d" or c== "") and (mato.y + 1 >= mato.columns -2)):
-				c = k[mato.rnd(0, len(k)-1)]
+#			while ((c == "a" or c== "") and (mato.y + -1 <= 2)) or ((c == "d" or c== "") and (mato.y + 1 >= mato.columns -2)):
+#				c = k[mato.rnd(0, len(k)-1)]
 			#while (c == "d" or c== "") and (mato.y + 2 >= mato.columns -4):
 			#	c = k[mato.rnd(0, len(k)-1)]
 			#print("VX: " + str(mato.vx) + ", X: " + str(mato.x) + ", add: " + str(mato.x + mato.vx))
 			if s >= ls:
 				#mato.zero()
 				c = "r"
-			mato.step(c, True, False, True, True, False)
+			tries = 0
+			coll = True
+			try:
+				coll = (mato.arr[mato.x + cToXY(c)[0]][mato.y + cToXY(c)[1]] == mato.p_snake)
+			except Exception as ez:
+				ez = ""
+			while coll:
+				if tries > 100:
+					mato.dead = True
+					break
+				c = k[mato.rnd(0, len(k)-1)]
+				try:
+					coll = (mato.arr[mato.x + cToXY(c)[0]][mato.y + cToXY(c)[1]] == mato.p_snake)
+				except Exception as ez:
+					ez = ""
+				tries = tries + 1
+			mato.step(c, True, True, True, True, False)
 			#print(s)
 			if mato.dead:
 				#mato.end("f")
@@ -101,7 +122,8 @@ for t in range(iterations):
 			if(slee > 0):
 				time.sleep(slee)
 	print("Iteration " + str(t) + " done, score: " + str(mato.score))
-	mato.zero()
+	mato.zero(False)
+mato.zero(True)
 print(str(iterations) + " iterations done, best score: " + str(mato.hscore))
 conf = input("Play the best iteration? (y/*)\n>")
 if conf == "y":
