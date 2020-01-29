@@ -19,6 +19,8 @@ p_snake = "."
 p_empty = " "
 
 
+filename = "best.replay"
+
 arr_show = arr
 rows, columns = os.popen('stty size', 'r').read().split()
 rows = int(rows) - 5
@@ -29,12 +31,22 @@ columns = int(columns)
 tail = 3
 m = 1
 score = 0
+hscore = 0
+dead = False
+
+record = []
+best = []
 
 treat = (rnd(3, rows), rnd(3, columns))
 
+limitBounds = True
 
 def zero():
-	global x, y, tail, m, score, vx, vy, delay, delta, columns, rows
+	global x, y, tail, m, score, vx, vy, delay, delta, columns, rows, record, best
+	if hscore == score:
+		#best = copy.deepcopy(record)
+		save(record)
+	record = []
 	x = 3
 	y = 3
 	x = int(rows / 2)
@@ -94,7 +106,7 @@ def nprint(ar):
 #			print(x,end="")
 #		print()
 
-dead = False
+
 def safeM():
 	global x, y, vx, vy, columns, rows
 	global p_treat, p_snake, p_empty
@@ -143,7 +155,7 @@ def block():
 		e = ""
 	return die
 def doScore():
-	global m, treat, rows, columns, arr, tail, delay, score
+	global m, treat, rows, columns, arr, tail, delay, score, hscore
 	global p_treat, p_snake, p_empty
 	m = m * 2
 	tail = tail + 1
@@ -154,7 +166,9 @@ def doScore():
 	if(mx < 0):
 		mx = 0
 	score = score + int(int(m*mx)/100000)
-	delta
+	if score > hscore:
+		hscore = score
+	#delta
 def end(msg, askRetry = False):
 	global x, y
 	print(msg + "(" +str(x) + "," + str(y) + ")")
@@ -162,9 +176,28 @@ def end(msg, askRetry = False):
 	if not askRetry:
 		sys.exit()
 	title(msg)
+def save(arr):
+	cls()
+	an = ["|", "/", "-", "\\"]
+	out = ""
+	with open(filename, "w+") as f:
+		for i in arr:
+			cls()
+			an.append(an.pop(0))
+			print("please wait, saving your run..." + an[0])
+			z = ""
+			for x in i:
+				z = z + str(x)
+			out = out + z.replace("\n", "?<") + "\n"
+			#f.write(str(i))
+		f.write(out)
+		f.close()
+	cls()
+	print("please wait, saving your run..." + "DONE")
 def step(c, autoR = False, render = True, printC = False, printXY = False, printS = True):
-	global m, treat, rows, columns, arr, tail, delay, score, t, delta, vx, vy, m, dead
+	global m, treat, rows, columns, arr, tail, delay, score, t, delta, vx, vy, m, dead, x, y
 	global p_treat, p_snake, p_empty
+	global record
 	#print("Not implemented yet!")
 	try:
 		arr[locs[t-tail][0]][locs[t-tail][1]] = p_empty
@@ -183,9 +216,19 @@ def step(c, autoR = False, render = True, printC = False, printXY = False, print
 	elif c == "d" and vy != -1:
 		vy = 1
 		vx = 0
+	elif c == "e":
+		for i in range(5):
+			#t = t + 1
+			#tail = tail - 1
+			x = x + vx
+			y = y + vy
+			#locs.append([x, y])
 	elif c == "q":
 		#break
 		end("User exit")
+	elif c == "r":
+		arr[treat[0]][treat[1]] = p_empty
+		treat = (rnd(1, rows-2), rnd(1, columns-2))
 	#with Input(keynames='curses') as input_generator:
 	#	for e in input_generator:
 	#		print(repr(e))
@@ -196,7 +239,7 @@ def step(c, autoR = False, render = True, printC = False, printXY = False, print
 	if rev and not autoR:
 		end("You died.", True)
 	if rev and autoR:
-		zero()
+		#zero()
 		dead = True
 		#end("You died.", False)
 	#if rev:
@@ -208,10 +251,11 @@ def step(c, autoR = False, render = True, printC = False, printXY = False, print
 		arr[treat[0]][treat[1]] = p_treat
 	except Exception as e:
 		e = ""
+		treat = (rnd(1, rows-2), rnd(1, columns-2))
 	if rev and not autoR:
 		end("You died.", True)
 	if rev and autoR:
-		zero()
+		#zero()
 		dead = True
 		#end("You died.", False)
 	
@@ -231,6 +275,7 @@ def step(c, autoR = False, render = True, printC = False, printXY = False, print
 	delta = delta + 1
 	#score = score + int(t*m)
 	locs.append([x, y])
+	record.append(arr_show)
 def main():
 	global m, treat, rows, columns, arr, tail, delay, score, t, delta, vx, vy, m
 	global p_treat, p_snake, p_empty
@@ -238,75 +283,18 @@ def main():
 		while True:
 			c = input.send(delay)
 			step(c)
-def mainO():
-	global m, treat, rows, columns, arr, tail, delay, score, t, delta, vx, vy, m
-	global p_treat, p_snake, p_empty
-	with Input(sys.stdin) as input:
-		while True:
-			#arr[treat[0]][treat[1]] = p_treat
-			#delay = 0.5 - int(0.1 * m)
-			
-			try:
-				arr[locs[t-tail][0]][locs[t-tail][1]] = p_empty
-			except Exception as e:
-				print(e)
-			c = input.send(delay)
-			if c == "w" and vx != 1:
-				vy = 0
-				vx = -1
-			elif c == "s" and vx != -1:
-				vy = 0
-				vx = 1
-			elif c == "a" and vy != 1:
-				vy = -1
-				vx = 0
-			elif c == "d" and vy != -1:
-				vy = 1
-				vx = 0
-			elif c == "q":
-				break
-			#with Input(keynames='curses') as input_generator:
-			#	for e in input_generator:
-			#		print(repr(e))
-			arr_show = arr.copy()[:]
-			#arr_show = copy.deepcopy(arr)
-			rev = False
-			rev = safeM();
-			if rev:
-				end("You died.")
-			#if rev:
-				#vy = vy * -1
-				#vx = vx * -1
-				#safeM();
-			rev = block()
-			arr[treat[0]][treat[1]] = p_treat
-			if rev:
-				end("You died.")
-			
-			arr_show[x][y] = p_snake
-			#os.system("clear")
-			arr_show = copy.deepcopy(arr)
-			
-			nprint(arr_show)
-			print("score: " + str(int(score)) + ", " + str(m) + p_snake)
-			t = t + 1
-			delta = delta + 1
-			#score = score + int(t*m)
-			locs.append([x, y])
-			#tail = int(t/2)
-	print("Have a good day!")
 def title(title = "MATO"):
-	global score
+	global score, hscore
 	cls()
 	msg1 = "PRESS ENTER TO START"
 	fill = " " * int(columns / 2 - len(msg1)/2)
-	print("MATO by Jonnelafin" + "\n" * int(rows/2) + fill + title + "\n" + fill + msg1 + "\n" + fill + "SCORE: " + str(score) + "\n" * int(rows/2 - 4))
-	print()
+	msg = "MATO by Jonnelafin" + "\n" * int(rows/2) + fill + title + "\n" + fill + msg1 + "\n" + fill + "SCORE: " + str(score) + "\n" + fill + "HISCORE: " + str(hscore) + "\n" * int(rows/2 - 4)
+	zero()
+	print(msg)
 	print("enter + q to quit")
 	inp = input()
 	if inp == "q":
 		end("User exit")
-	zero()
 	main()
 if __name__ == '__main__':
 	title()

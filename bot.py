@@ -1,6 +1,6 @@
 #!/bin/python3
 #written by Elias Eskelinen aka "Jonnelafin"
-import mato, time, hellevolve
+import mato, time
 import math
 
 k = ["a", "w", "s", "d", ""]
@@ -30,8 +30,9 @@ def cToXY(c):
 		x = 0
 	return x, y
 it = 1
-iterations = 1
+iterations = 200
 mato.zero()
+slee = 0
 ls = 20000000
 for t in range(iterations):
 	for i in range(it):
@@ -48,7 +49,8 @@ for t in range(iterations):
 					c = d
 					s = ds
 			if s > ls:
-				c2 = ""
+				c = "r"
+				#c2 = ""
 #				if c == "a":
 #					c2 = "w"
 #				elif c == "d":
@@ -57,15 +59,15 @@ for t in range(iterations):
 #					c2 = "a"
 #				elif c == "w":
 #					c2 = "d"
-				if c == "" and mato.vx == 1:
-					c2 = "w"
-				elif c == "" and mato.vx == -1:
-					c2 = "s"
-				elif c == "" and mato.vy == 1:
-					c2 = "a"
-				elif c == "" and mato.vx == -1:
-					c2 = "d"
-				step(c2, True, False)
+				#if c == "" and mato.vx == 1:
+				#	c2 = "w"
+				#elif c == "" and mato.vx == -1:
+				#	c2 = "s"
+				#elif c == "" and mato.vy == 1:
+				#	c2 = "a"
+				#elif c == "" and mato.vx == -1:
+				#	c2 = "d"
+				#step(c2, True, False)
 			#if (mato.treat[0] - (mato.x + 1)) < (mato.treat[0] - mato.x):
 			#	c = "d"
 			#if (mato.treat[0] - (mato.x - 1)) < (mato.treat[0] - mato.x):
@@ -77,18 +79,32 @@ for t in range(iterations):
 			#while (mato.x + mato.vx <= 1 and not (c==" " or c=="w")) or (mato.x + mato.vx > mato.rows - 3 and not (c==" " or c=="s")):
 				#c = "d"
 			#	c = k[mato.rnd(0, len(k)-1)]
-			while ((c == "w" or c== "") and (mato.x + -1 <= 3)) or ((c == "s" or c== "") and (mato.x + 1 >= mato.rows -3)):
+			while ((c == "w" or c== "") and (mato.x + -1 <= 2)) or ((c == "s" or c== "") and (mato.x + 1 >= mato.rows -2)):
 				c = k[mato.rnd(0, len(k)-1)]
 			#while (c == "s" or c== "") and (mato.x + 2 >= mato.rows -4):
 			#	c = k[mato.rnd(0, len(k)-1)]
-			while ((c == "a" or c== "") and (mato.y + -1 <= 3)) or ((c == "d" or c== "") and (mato.y + 1 >= mato.columns -3)):
+			while ((c == "a" or c== "") and (mato.y + -1 <= 2)) or ((c == "d" or c== "") and (mato.y + 1 >= mato.columns -2)):
 				c = k[mato.rnd(0, len(k)-1)]
 			#while (c == "d" or c== "") and (mato.y + 2 >= mato.columns -4):
 			#	c = k[mato.rnd(0, len(k)-1)]
 			#print("VX: " + str(mato.vx) + ", X: " + str(mato.x) + ", add: " + str(mato.x + mato.vx))
-			mato.step(c, True, True, True, True, False)
-			print(s)
+			if s >= ls:
+				#mato.zero()
+				c = "r"
+			mato.step(c, True, False, True, True, False)
+			#print(s)
 			if mato.dead:
 				#mato.end("f")
+				#mato.zero()
 				break
-			time.sleep(0.00)
+			ls = s
+			if(slee > 0):
+				time.sleep(slee)
+	print("Iteration " + str(t) + " done, score: " + str(mato.score))
+	mato.zero()
+print(str(iterations) + " iterations done, best score: " + str(mato.hscore))
+conf = input("Play the best iteration? (y/*)\n>")
+if conf == "y":
+	for i in mato.best:
+		mato.nprint(i)
+		#time.sleep(0.01)
