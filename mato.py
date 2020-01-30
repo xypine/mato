@@ -21,6 +21,16 @@ p_empty = " "
 
 filename = "best.replay"
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 arr_show = arr
 rows, columns = os.popen('stty size', 'r').read().split()
 rows = int(rows) - 5
@@ -213,6 +223,7 @@ def step(c, autoR = False, render = True, printC = False, printXY = False, print
 	#print("Not implemented yet!")
 	try:
 		arr[locs[t-tail][0]][locs[t-tail][1]] = p_empty
+		arr[locs[t-1][0]][locs[t-1][1]] = p_snake
 	except Exception as e:
 		print(e)
 	#c = input.send(delay)
@@ -241,6 +252,12 @@ def step(c, autoR = False, render = True, printC = False, printXY = False, print
 	elif c == "r":
 		arr[treat[0]][treat[1]] = p_empty
 		treat = (rnd(1, rows-2), rnd(1, columns-2))
+	elif c == "f":
+		vx = -vx
+		vy = -vy
+		arr[locs[t-tail][0]][locs[t-tail][1]] = p_empty
+		x = locs[t-tail][0]
+		y = locs[t-tail][1]
 	#with Input(keynames='curses') as input_generator:
 	#	for e in input_generator:
 	#		print(repr(e))
@@ -271,7 +288,7 @@ def step(c, autoR = False, render = True, printC = False, printXY = False, print
 		dead = True
 		#end("You died.", False)
 	try:
-		arr_show[x][y] = p_snake
+		arr_show[x][y] = bcolors.OKGREEN + "," + bcolors.ENDC
 	except Exception as e:
 		e = ""
 	#os.system("clear")

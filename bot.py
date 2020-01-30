@@ -53,8 +53,8 @@ for t in range(iterations):
 				if ds <= s:
 					c = d
 					s = ds
-			if s > ls:
-				c = "r"
+#			if s > ls:
+#				c = "r"
 				#c2 = ""
 #				if c == "a":
 #					c2 = "w"
@@ -93,9 +93,9 @@ for t in range(iterations):
 			#while (c == "d" or c== "") and (mato.y + 2 >= mato.columns -4):
 			#	c = k[mato.rnd(0, len(k)-1)]
 			#print("VX: " + str(mato.vx) + ", X: " + str(mato.x) + ", add: " + str(mato.x + mato.vx))
-			if s >= ls:
+#			if s >= ls:
 				#mato.zero()
-				c = "r"
+#				c = "r"
 			tries = 0
 			coll = True
 			try:
@@ -104,8 +104,10 @@ for t in range(iterations):
 				ez = ""
 			while coll:
 				if tries > 100:
-					mato.dead = True
+					c = "f"
 					break
+					#mato.dead = True
+					#break
 				c = k[mato.rnd(0, len(k)-1)]
 				try:
 					coll = (mato.arr[mato.x + cToXY(c)[0]][mato.y + cToXY(c)[1]] == mato.p_snake)
@@ -127,6 +129,7 @@ mato.zero(True)
 print(str(iterations) + " iterations done, best score: " + str(mato.hscore))
 conf = input("Play the best iteration? (y/*)\n>")
 if conf == "y":
-	for i in mato.best:
-		mato.nprint(i)
+	import player
+	#for i in mato.best:
+	#	mato.nprint(i)
 		#time.sleep(0.01)
