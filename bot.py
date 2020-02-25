@@ -4,7 +4,7 @@ import mato, time
 import math
 
 k = ["a", "w", "s", "d", ""]
-
+mato.load()
 
 def dist(x1,y1,x2,y2):  
      distt = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)  
@@ -33,12 +33,18 @@ def cToXY(c):
 		#y = y * 5
 	return x, y
 it = 1
-iterations = 1
+iterations = 3
 
 mato.limitBounds = False
 mato.zero(False)
 slee = 0
 ls = 20000000
+
+l1 = []
+l2 = []
+l3 = []
+l4 = []
+
 for t in range(iterations):
 	for i in range(it):
 		#r = mato.rnd(0, len(rules)-1)
@@ -114,18 +120,30 @@ for t in range(iterations):
 				except Exception as ez:
 					ez = ""
 				tries = tries + 1
-			mato.step(c, True, True, True, True, False)
+			mato.step(c, True, False, True, False, False)
 			#print(s)
+			if [mato.x, mato.y] == l1 and l1 == l2 and l2 == l3 and l3 == l4:
+				mato.dead = True
 			if mato.dead:
 				#mato.end("f")
 				#mato.zero()
 				break
 			ls = s
+			l4 = l3
+			l3 = l2
+			l2 = l1
+			l1 = [mato.x, mato.y]
+			mato.cls()
+			print("Finding the best iteration... [" + str(t) + "/" + str(iterations) + "]")
+			print("Current score: " + str(mato.score) )
+			print("Current highscore: " + str(mato.hscore))
+			#print(str(mato.score) + ",					" + str(mato.m))
 			if(slee > 0):
 				time.sleep(slee)
 	print("Iteration " + str(t) + " done, score: " + str(mato.score))
-	mato.zero(False)
-mato.zero(True)
+	mato.zero()
+#mato.save(mato.best)
+#mato.zero()
 print(str(iterations) + " iterations done, best score: " + str(mato.hscore))
 conf = input("Play the best iteration? (y/*)\n>")
 if conf == "y":

@@ -13,10 +13,7 @@ locs = []
 t = 0
 
 
-#P
-p_treat = "*"
-p_snake = "."
-p_empty = " "
+
 
 
 filename = "best.replay"
@@ -30,6 +27,11 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
+#P
+p_treat = bcolors.WARNING + "*" + bcolors.ENDC
+p_snake = "."
+p_empty = " "
 
 arr_show = arr
 rows, columns = os.popen('stty size', 'r').read().split()
@@ -178,7 +180,8 @@ def doScore():
 	mx = (2000000 - delta)
 	if(mx < 0):
 		mx = 0
-	score = score + int(int(m*mx)/100000)
+	score = score + 1
+	#score = score + int(int(m*mx)/100000)
 	if score > hscore:
 		hscore = score
 	#delta
@@ -194,7 +197,7 @@ def load():
 	with open(filename, "r+") as f:
 		for i in f.readlines():
 			i = i.replace("\n", "")
-			if i[0] == "#":
+			if len(i) != 0 and i[0] == "#":
 				hscore = int(i.split("#")[1])
 		f.close()
 def save(arr):
@@ -306,9 +309,12 @@ def step(c, autoR = False, render = True, printC = False, printXY = False, print
 	delta = delta + 1
 	#score = score + int(t*m)
 	locs.append([x, y])
-	if treat != lt:
+	# treat != lt
+	if True:
 		lt = treat
 		record.append(str(treat))
+	if True:
+		record.append("!" + str(tail))
 	record.append(str(c))
 def main():
 	global m, treat, rows, columns, arr, tail, delay, score, t, delta, vx, vy, m
