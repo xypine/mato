@@ -65,4 +65,4 @@ for i in range(t):
 	#print("Key: " + str(arrt[i]))
 	#time.sleep(1)
 	#t = t + 1
-	time.sleep(0.01)
+	time.sleep(0.0001)

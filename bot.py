@@ -44,7 +44,7 @@ l1 = []
 l2 = []
 l3 = []
 l4 = []
-
+mato.cls(True)
 for t in range(iterations):
 	for i in range(it):
 		#r = mato.rnd(0, len(rules)-1)
@@ -120,7 +120,7 @@ for t in range(iterations):
 				except Exception as ez:
 					ez = ""
 				tries = tries + 1
-			mato.step(c, True, False, True, False, False)
+			mato.step(c, True, True, True, False, False)
 			#print(s)
 			if [mato.x, mato.y] == l1 and l1 == l2 and l2 == l3 and l3 == l4:
 				mato.dead = True
@@ -133,7 +133,7 @@ for t in range(iterations):
 			l3 = l2
 			l2 = l1
 			l1 = [mato.x, mato.y]
-			mato.cls()
+			mato.cls(False)
 			print("Finding the best iteration... [" + str(t) + "/" + str(iterations) + "]")
 			print("Current score: " + str(mato.score) )
 			print("Current highscore: " + str(mato.hscore))
@@ -151,3 +151,5 @@ if conf == "y":
 	#for i in mato.best:
 	#	mato.nprint(i)
 		#time.sleep(0.01)
+
+mato.cls(True)

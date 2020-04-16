@@ -59,6 +59,7 @@ def zero(dosave = True):
 		#best = copy.deepcopy(record)
 		save(record)
 	record = []
+	delay = 0.05
 	x = 3
 	y = 3
 	x = int(rows / 2)
@@ -99,8 +100,10 @@ arr[int(rows/2)+3][int(columns/2)] = "s"
 arr[int(rows/2)][int(columns/2)+3] = "d"
 print("Init complete.")
 
-def cls():
-	print("\033[H\033[J")
+def cls(all = False):
+	print("\033[H")
+	if all:
+		print("\033[J",end="")
 def nprint(ar):
 	out = ""
 	#out = "-"*columns + "\n"
@@ -261,6 +264,7 @@ def step(c, autoR = False, render = True, printC = False, printXY = False, print
 		arr[locs[t-tail][0]][locs[t-tail][1]] = p_empty
 		x = locs[t-tail][0]
 		y = locs[t-tail][1]
+		#locs.reverse()
 	#with Input(keynames='curses') as input_generator:
 	#	for e in input_generator:
 	#		print(repr(e))
@@ -325,7 +329,7 @@ def main():
 			step(c)
 def title(title = "MATO"):
 	global score, hscore
-	cls()
+	cls(True)
 	msg1 = "PRESS ENTER TO START"
 	fill = " " * int(columns / 2 - len(msg1)/2)
 	msg = "MATO by Jonnelafin" + "\n" * int(rows/2) + fill + title + "\n" + fill + msg1 + "\n" + fill + "SCORE: " + str(score) + "\n" + fill + "HISCORE: " + str(hscore) + "\n" * int(rows/2 - 4)
