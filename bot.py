@@ -147,7 +147,7 @@ for t in range(iterations):
 print(str(iterations) + " iterations done, best score: " + str(mato.hscore))
 conf = input("Play the best iteration? (y/*)\n>")
 if conf == "y":
-	import player
+	pass
 	#for i in mato.best:
 	#	mato.nprint(i)
 		#time.sleep(0.01)
