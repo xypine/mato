@@ -1,7 +1,7 @@
 #!/bin/python3
 #written by Elias Eskelinen aka "Jonnelafin"
 import mato
-import time, sys
+import time
 
 t = 0
 arrt = []
